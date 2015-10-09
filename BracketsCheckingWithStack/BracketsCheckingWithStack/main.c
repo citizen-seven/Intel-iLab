@@ -71,5 +71,6 @@ int main()
         printf("The sequence of brackets is incorrect\n");
     }
     return 0;
+    //check ignoring only
     
 }
