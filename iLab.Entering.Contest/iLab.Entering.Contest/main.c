@@ -11,7 +11,7 @@ int main()
         }
         else {
             if (brackets[i]==')') {
-            count=count-1;
+                count=count-1;
             }
         }
         if (count<0) {
