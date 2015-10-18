@@ -6,8 +6,15 @@ typedef struct {
     int count;
 } stack;
 
-void put(char bracket, stack* stack) {
+void push(char bracket, stack* stack) {
     stack->head[stack->count] = bracket;
+    stack->count++;
+    
+};
+char pop(stack* stack) {
+    stack->count--;
+    return(stack->head[stack->count]);
+    
 };
 
 int main()
@@ -21,20 +28,19 @@ int main()
     scanf("%s",s);
     c = *str;
     if (*str != '(' && *str != '{' && *str != '[') {
-        printf("The sequence of brackets is incorrect\n");
+        printf("The sequence is incorrect\n");
         exit(0);
     }
     while (*str != '\0') {
         if (*str == '(' || *str == '{' || *str == '[') {
-            put(*str, &a);
-            a.count++;
+            push(*str, &a);
             str++;
         }
         if (*str == ')') {
             str++;
-            if (a.head[a.count-1] == '(') {
-                a.count--;
-                put('\0', &a);
+            if (pop(&a) == '(') {
+                a.count++;
+                pop(&a);
             }
             else {
                 printf("The sequence of brackets is incorrect\n");
@@ -43,9 +49,9 @@ int main()
         }
         if (*str == '}') {
             str++;
-            if (a.head[a.count-1] == '{') {
-                a.count--;
-                put('\0', &a);
+            if (pop(&a) == '{') {
+                a.count++;
+                pop(&a);
                 
             }
             else {
@@ -55,9 +61,9 @@ int main()
         }
         if (*str == ']') {
             str++;
-            if (a.head[a.count-1] == '[') {
-                a.count--;
-                put('\0', &a);
+            if (pop(&a) == '[') {
+                a.count++;
+                pop(&a);
             }
             else {
                 printf("The sequence of brackets is incorrect\n");
@@ -66,7 +72,7 @@ int main()
 
         }
     }
-    if (a.head[0] == '\0') {
+    if (a.count == 0) {
         printf("The sequence of brackets is correct\n");
     }
     else {
