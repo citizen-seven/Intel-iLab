@@ -23,7 +23,7 @@ int main()
     a.count=0;
     char c;
     char s[100];
-    char* str = s;
+    char* str = s; // "s" is a adress itself. You can use s++ same with *s. no need for extra pointer 
 
     scanf("%s",s);
     c = *str;
@@ -38,9 +38,9 @@ int main()
         }
         if (*str == ')') {
             str++;
-            if (pop(&a) == '(') {
-                a.count++;
-                pop(&a);
+            if (pop(&a) == '(') { // you can just make if (pop(&a) != '(')) {...}
+                a.count++; // two useless lines. why do you increment counter
+                pop(&a);   // and then decrement it in pop, without using the return value
             }
             else {
                 printf("The sequence of brackets is incorrect\n");
@@ -50,7 +50,7 @@ int main()
         if (*str == '}') {
             str++;
             if (pop(&a) == '{') {
-                a.count++;
+                a.count++; // same as above
                 pop(&a);
                 
             }
