@@ -1,10 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 
 typedef struct {
-    char head[100];
+    char* head;
     int count;
 } stack;
+
+void ctor(stack* This) {
+    assert(This);
+    This -> head = (char *) calloc(20, sizeof(char));
+}
+
+void dtor(stack* This) {
+    assert(This);
+    free(This->head);
+    printf("The sequence of brackets is incorrect\n");
+    exit(0);
+}
 
 void push(char bracket, stack* stack) {
     stack->head[stack->count] = bracket;
@@ -14,22 +28,24 @@ void push(char bracket, stack* stack) {
 char pop(stack* stack) {
     stack->count--;
     return(stack->head[stack->count]);
-    
 };
 
 int main()
 {
     stack a;
+    ctor(&a);
     a.count=0;
-    char c;
-    char s[100];
-    char* str = s; // "s" is a adress itself. You can use s++ same with *s. no need for extra pointer 
-
-    scanf("%s",s);
-    c = *str;
+    int i;
+    int brackets_number;
+    printf("Write the number of brackets:");
+    scanf("%d\n",&brackets_number);
+    char* s = (char *) calloc(brackets_number, sizeof(char));
+    char* str = s;
+    for (i=0; i<brackets_number; i++) {
+        scanf("%c",&s[i]);
+    }
     if (*str != '(' && *str != '{' && *str != '[') {
-        printf("The sequence is incorrect\n");
-        exit(0);
+        dtor(&a);
     }
     while (*str != '\0') {
         if (*str == '(' || *str == '{' || *str == '[') {
@@ -38,42 +54,30 @@ int main()
         }
         if (*str == ')') {
             str++;
-            if (pop(&a) == '(') { // you can just make if (pop(&a) != '(')) {...}
-                a.count++; // two useless lines. why do you increment counter
-                pop(&a);   // and then decrement it in pop, without using the return value
-            }
-            else {
-                printf("The sequence of brackets is incorrect\n");
-                exit(1);
+            if (pop(&a) != '(') {
+                dtor(&a);
             }
         }
         if (*str == '}') {
             str++;
-            if (pop(&a) == '{') {
-                a.count++; // same as above
-                pop(&a);
-                
-            }
-            else {
-                printf("The sequence of brackets is incorrect\n");
-                exit(1);
+            if (pop(&a) != '{') {
+                dtor(&a);
             }
         }
         if (*str == ']') {
             str++;
-            if (pop(&a) == '[') {
-                a.count++;
-                pop(&a);
+            if (pop(&a) != '[') {
+                dtor(&a);
             }
-            else {
-                printf("The sequence of brackets is incorrect\n");
-                exit(1);
-            }
-
+        }
+        if (20-strlen(a.head) < 2) {
+            realloc(a.head, 20*sizeof(char));
         }
     }
     if (a.count == 0) {
         printf("The sequence of brackets is correct\n");
+        free(a.head);
+        free(s);
     }
     else {
         printf("The sequence of brackets is incorrect\n");
