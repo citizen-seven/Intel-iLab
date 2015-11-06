@@ -71,7 +71,7 @@ int main()
             }
         }
         if (20-strlen(a.head) < 2) {
-            realloc(a.head, 20*sizeof(char));
+            realloc(a.head, 2*sizeof(a.head));
         }
     }
     if (a.count == 0) {
