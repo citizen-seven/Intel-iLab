@@ -1,5 +1,6 @@
-*.xcuserstate
-project.xcworkspace/
-xcuserdata/
-*.pbxproj
-test exit/test exit/main.c
+**/*.xcuserstate
+**/project.xcworkspace/
+**/xcuserdata/
+**/*.pbxproj
+**/*.xcodeproj
+test exit/
