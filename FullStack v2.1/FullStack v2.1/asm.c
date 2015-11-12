@@ -33,7 +33,7 @@ int main() {
      };
      #undef DEF_CMD
      */
-    while (i<4) {
+    while (2) {
         fgets(str, 50, in);
         printf ("%s\n", str);
         i++;
