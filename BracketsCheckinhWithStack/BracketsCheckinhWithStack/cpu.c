@@ -2,33 +2,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "MyStack.h"
 
-typedef struct {
-    char* head;
-    int count;
-} stack;
-
-void ctor(stack* This) {
-    assert(This);
-    This -> head = (char *) calloc(20, sizeof(char));
-}
-
-void dtor(stack* This) {
-    assert(This);
-    free(This->head);
-    printf("The sequence of brackets is incorrect\n");
-    exit(0);
-}
-
-void push(char bracket, stack* stack) {
-    stack->head[stack->count] = bracket;
-    stack->count++;
-    
-};
-char pop(stack* stack) {
-    stack->count--;
-    return(stack->head[stack->count]);
-};
 
 int main()
 {
@@ -75,11 +50,14 @@ int main()
         }
     }
     if (a.count == 0) {
+        dump(&a);
         printf("The sequence of brackets is correct\n");
         free(a.head);
         free(s);
+        
     }
     else {
+        dump(&a);
         printf("The sequence of brackets is incorrect\n");
     }
     return 1;
