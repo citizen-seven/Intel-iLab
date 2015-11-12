@@ -33,16 +33,17 @@ int main() {
      };
      #undef DEF_CMD
      */
-    while (2) {
+    while (1) {
         fgets(str, 50, in);
         printf ("%s\n", str);
         i++;
+        buff = (strtok(str, " "));
 #define DEF_CMD(name,num,rule,argnum) \
-if (strcmp(strtok(str, " "), #name) == 0){ \
+if (strcmp(buff, #name) == 0){ \
 fprintf(out, "%d ", cmd_##name);\
 if (argnum>0) { \
-buff = (strtok(NULL, " \n"));\
-fprintf(out, "%s\n", buff);}}\
+buff = (strtok(NULL, "\n"));\
+fprintf(out, "%s ", buff);}}\
 else
 #include "cmdlist.h"
         printf("Error..\n"); //это испрaвит ошибку с последним else
