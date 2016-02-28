@@ -13,9 +13,10 @@ DEF_CMD(div,6, { temp = Stack_pop(This);
     exit(-1);
     }
 }, none)
-DEF_CMD(mov, 7, {Stack_mov(This, This->cmd[++This->pc], This->cmd[++This->pc]);}, regs)
+DEF_CMD(mov, 7, {cpu_mov(This, This->cmd[++This->pc], This->cmd[++This->pc]);}, regs)
+DEF_CMD(cmp, 13, {cpu_cmp(This);}, none)
 DEF_CMD(jmp, 8, {cpu_jmp(This);}, label)
 DEF_CMD(jne, 9, {cpu_jne(This);}, label)
 DEF_CMD(je, 10, {cpu_je(This);}, label)
-DEF_CMD(call, 11, {}, label)
+DEF_CMD(call, 11, {This->pc++;}, label)
 DEF_CMD(ret, 12, {}, none)

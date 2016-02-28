@@ -7,6 +7,8 @@
 //
 
 #include <iostream>
+#include <assert.h>
+
 
 class CStack {
 private:
@@ -20,8 +22,9 @@ public:
     int dump();
 };
 
-CStack::CStack(): data(), size(0)
-{}
+CStack::CStack(): data(), size(0) {
+    std::cout<<"Stack had been created"<< std::endl;
+}
 
 CStack::~CStack() {
     std::cout<<"Stack has been deleted" <<std::endl;
@@ -46,6 +49,7 @@ int CStack::dump() {
     std::cout << std::endl ;
     return 0;
 }
+
 
 int main() {
     CStack stack;
