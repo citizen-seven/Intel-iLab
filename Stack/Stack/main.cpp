@@ -22,18 +22,19 @@ public:
     int dump();
 };
 
-CStack::CStack(): data(),
+CStack::CStack():
+data(), // I think because it's a list better to place it as a list 
 size(0) {
     std::cout<<"Stack had been created"<< std::endl;
 }
 
 CStack::~CStack() {
     //std::cout << "Stack has been deleted" << std::endl;
-    size = -1;
+    this->size = -1; // adding this->
 }
 
 int CStack::push(int val) {
-    if (size >= 0) {
+    if (this->size >= 0 & this->size < 100) { // you need to check overflow!!
         this->data[this->size++] = val;
     } else {
         std::cout << "Invalid stack pointer" << std::endl;
