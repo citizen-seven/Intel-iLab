@@ -8,43 +8,17 @@
 
 #include <iostream>
 #include <assert.h>
-#include <string>
 
-template <typename data_T>
+
 class CVector {
-    const static int size_ = 10;
-    data_T data_[size_];
-public:
-    CVector(): data_{} {
-    };
-    //~CVector();
-    data_T& operator[](int index) {
-        assert(0<=index && index<size_);
-        return data_[index];
-    }
-    CVector& operator+=(CVector right) {
-        if (typeid(data_T) == typeid(int)) {
-            for (int i = 0; i < size_; i++) {
-                this->data_[i]+=right[i];
-            }
-        } else if (typeid(data_T) == typeid(std::string)) {
-            for (int i = 0; i<size_; i++) {
-                //strcat(this->data_[i], &right[i]);
-            }
-        }
-        return *this;
-    }
-};
-
-/*class CVector {
 public:
     const static int size_ = 10;
     CVector();
     ~CVector();
-    int* operator[](int index) {
+    /*int* operator[](int index) {
         assert(0<=index && index<size_);
         return &data_[index];
-    }
+    }*/
     int& operator[](int index) {
         assert(0<=index && index<size_);
         return data_[index];
@@ -58,38 +32,43 @@ public:
 private:
     int data_[size_];
     int $_;
-};*/
-template<class T>
-T& operator+ (CVector<int>& right, CVector<int>& left) {
-    CVector<int>& result = right;
+};
+
+CVector::CVector(): data_{} {
+    
+}
+
+CVector& operator+(CVector& right, CVector& left) {
+    CVector& result = right;
     result += left;
     return result;
 }
 
-/*int operator^(CVector& right, CVector& left) {
+int operator^(CVector& right, CVector& left) {
     int result = 0;
     for (int i = 0; i < right.size_; i++) {
         result += right[i]*left[i];
     }
     return result;
-}*/
+}
 
-
+CVector::~CVector() {
+}
 
 int main() {
-    CVector<int> v;
-    CVector<int> k;
-    //CVector k;
-    //CVector r;
+    CVector v;
+    CVector k;
+    CVector r;
     for (int i = 0; i <= 9; i++) {
         v[i] = 1;
         k[i] = 2;
     }
     int n = v.operator[](4);
-    v+=k;
-    //int nu = v^k;
-    //std::cout << "Dot product is: " << nu << std::endl;
-    std::cout << "Numbers: " << n << " and " << "hey" << std::endl;
+    int p = v[2];
+    r = v+v+k;
+    int nu = v^k;
+    std::cout << "Dot product is: " << nu << std::endl;
+    std::cout << "Numbers: " << n << " and " << p << std::endl;
     for (int i = 0; i<10; i++) {
         std::cout << v[i] << std::endl;
     }
