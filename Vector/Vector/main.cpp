@@ -27,9 +27,9 @@ public:
             for (int i = 0; i < size_; i++) {
                 this->data_[i]+=right[i];
             }
-        } else if (typeid(data_T) == typeid(std::string)) {
-            for (int i = 0; i<size_; i++) {
-                //strcat(this->data_[i], &right[i]);
+        } else if (typeid(data_T) == typeid(char)) {
+            for (int i = 0; i<size_; i+=2) {
+                this->data_[i+1] = right[i];
             }
         }
         return *this;
@@ -77,15 +77,15 @@ T& operator+ (CVector<int>& right, CVector<int>& left) {
 
 
 int main() {
-    CVector<int> v;
-    CVector<int> k;
+    CVector<char> v;
+    CVector<char> k;
     //CVector k;
     //CVector r;
     for (int i = 0; i <= 9; i++) {
-        v[i] = 1;
-        k[i] = 2;
+        v[i] = 'a';
+        k[i] = 'b';
     }
-    int n = v.operator[](4);
+    char n = v.operator[](4);
     v+=k;
     //int nu = v^k;
     //std::cout << "Dot product is: " << nu << std::endl;
