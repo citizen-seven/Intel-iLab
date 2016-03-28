@@ -12,29 +12,44 @@
 
 template <typename data_T>
 class CVector {
+public: //public has to be the first to make size_ visible
     const static int size_ = 10;
-    data_T data_[size_];
-public:
+    
     CVector(): data_{} {
     };
-    //~CVector();
+    
     data_T& operator[](int index) {
         assert(0<=index && index<size_);
         return data_[index];
-    }
-    CVector& operator+=(CVector right) {
-        if (typeid(data_T) == typeid(int)) {
-            for (int i = 0; i < size_; i++) {
-                this->data_[i]+=right[i];
-            }
-        } else if (typeid(data_T) == typeid(char)) {
-            for (int i = 0; i<size_; i+=2) {
-                this->data_[i+1] = right[i];
-            }
-        }
-        return *this;
-    }
+    };
+    
+    CVector<int>& operator+=(CVector<int> right);
+private:
+    data_T data_[size_];
 };
+
+template<>
+CVector<int>& CVector<int>::operator+=(CVector<int> right) {
+    for (int i = 0; i < size_; i++) {
+        this->data_[i]+=right[i];
+    }
+    return *this;
+}
+
+CVector<int> operator+ (CVector<int>& right, CVector<int>& left) {
+    CVector<int> result = right;
+    result += left;
+    return result;
+}
+
+int operator^(CVector<int>& right, CVector<int>& left) {
+    int result = 0;
+    for (int i = 0; i < right.size_; i++) {
+        result += right[i]*left[i];
+    }
+    return result;
+}
+
 
 /*class CVector {
 public:
@@ -59,39 +74,34 @@ private:
     int data_[size_];
     int $_;
 };*/
-template<class T>
-T& operator+ (CVector<int>& right, CVector<int>& left) {
-    CVector<int>& result = right;
-    result += left;
-    return result;
-}
-
-/*int operator^(CVector& right, CVector& left) {
-    int result = 0;
-    for (int i = 0; i < right.size_; i++) {
-        result += right[i]*left[i];
-    }
-    return result;
-}*/
-
-
 
 int main() {
-    CVector<char> v;
-    CVector<char> k;
-    //CVector k;
-    //CVector r;
-    for (int i = 0; i <= 9; i++) {
-        v[i] = 'a';
-        k[i] = 'b';
+    CVector<int> v;
+    CVector<int> k;
+    CVector<int> r;
+    
+    for (int i = 0; i <= 9; i++) { //initialization
+        v[i] = 11+i;
+        k[i] = 13-i;
     }
-    char n = v.operator[](4);
-    v+=k;
-    //int nu = v^k;
-    //std::cout << "Dot product is: " << nu << std::endl;
-    std::cout << "Numbers: " << n << " and " << "hey" << std::endl;
+
+    int num_4 = v.operator[](4); //checking overloaded []
+    int num_7 = k[7];
+    std::cout << "Numbers: " << num_4 << " and " << num_7 << std::endl;
+    
+    r = v + k; //checking overloaded +
     for (int i = 0; i<10; i++) {
-        std::cout << v[i] << std::endl;
+        std::cout << "Element " << i+1 << " in sum with + is "  << r[i] << std::endl;
+    };
+    
+    v += k; //checking overloaded +=
+    for (int i = 0; i<10; i++) {
+        std::cout << "Element " << i+1 << " in sum with += is " << v[i] << std::endl;
     }
+    
+    int dot_product = v^k; //checking overloaded ^
+    std::cout << "Dot product is: " << dot_product << std::endl;
+    
+    
     return 0;
 }
