@@ -13,25 +13,25 @@
 template <typename data_T>
 class CVector {
 public: //public has to be the first to make size_ visible
-    const static int size_ = 10;
+    const static int size_ = 10; // make private and getter
     
     CVector(): data_{} {
     };
     
     data_T& operator[](int index) {
-        assert(0<=index && index<size_);
+        assert(0<=index && index<size_); // code style
         return data_[index];
     };
     
     CVector<int>& operator+=(CVector<int> right);
 private:
-    data_T data_[size_];
+    data_T data_[size_]; // add getter & setter
 };
 
-template<>
+template <>
 CVector<int>& CVector<int>::operator+=(CVector<int> right) {
     for (int i = 0; i < size_; i++) {
-        this->data_[i]+=right[i];
+        this->data_[i]+=right[i]; // code style
     }
     return *this;
 }
@@ -45,7 +45,7 @@ CVector<int> operator+ (CVector<int>& right, CVector<int>& left) {
 int operator^(CVector<int>& right, CVector<int>& left) {
     int result = 0;
     for (int i = 0; i < right.size_; i++) {
-        result += right[i]*left[i];
+        result += right[i]*left[i]; // code style
     }
     return result;
 }
