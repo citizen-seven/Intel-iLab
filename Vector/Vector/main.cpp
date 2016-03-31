@@ -12,28 +12,53 @@
 
 template <typename data_T>
 class CVector {
-public: //public has to be the first to make size_ visible
-    const static int size_ = 10; // make private and getter
-    
+private:
+    const static int size_ = 10;
+    data_T data_[size_];
+public:
     CVector(): data_{} {
     };
     
-    data_T& operator[](int index) {
-        assert(0<=index && index<size_); // code style
+    int Vsize_() {
+        return size_;
+    }
+    
+    data_T& operator[] (int index) {
+        assert(0 <= index && index < size_);
         return data_[index];
     };
     
-    CVector<int>& operator+=(CVector<int> right);
-private:
-    data_T data_[size_]; // add getter & setter
+    CVector<data_T>& operator+= (CVector<data_T> right) {
+        std::cout << "Not implemented" << std::endl;
+        return *this;
+    };
+    
+    friend CVector<data_T> operator* (data_T factor, CVector<data_T>& vector) {
+        std::cout << "Not implemented" << std::endl;
+        return *vector;
+    };
+    friend CVector<data_T> operator* (CVector<data_T>& vector, data_T factor);
+    
 };
 
-template <>
-CVector<int>& CVector<int>::operator+=(CVector<int> right) {
+template<>
+CVector<int>& CVector<int>::operator+= (CVector<int> right) {
     for (int i = 0; i < size_; i++) {
-        this->data_[i]+=right[i]; // code style
+        this -> data_[i] += right[i];
     }
     return *this;
+}
+
+CVector<int> operator* (int factor, CVector<int>& vector) {
+    CVector<int> result;
+    for (int i = 0; i < result.Vsize_(); i++) {
+        result[i] = factor * vector[i];
+    }
+    return result;
+}
+
+CVector<int> operator* (CVector<int>& vector, int factor) {
+    return factor * vector;
 }
 
 CVector<int> operator+ (CVector<int>& right, CVector<int>& left) {
@@ -44,42 +69,17 @@ CVector<int> operator+ (CVector<int>& right, CVector<int>& left) {
 
 int operator^(CVector<int>& right, CVector<int>& left) {
     int result = 0;
-    for (int i = 0; i < right.size_; i++) {
-        result += right[i]*left[i]; // code style
+    for (int i = 0; i < right.Vsize_(); i++) {
+        result += right[i] * left[i]; // code style
     }
     return result;
 }
-
-
-/*class CVector {
-public:
-    const static int size_ = 10;
-    CVector();
-    ~CVector();
-    int* operator[](int index) {
-        assert(0<=index && index<size_);
-        return &data_[index];
-    }
-    int& operator[](int index) {
-        assert(0<=index && index<size_);
-        return data_[index];
-    }
-    CVector& operator+=(CVector& right) {
-        for (int i = 0; i < size_; i++) {
-            this->data_[i]+=right[i];
-        }
-        return *this;
-    }
-private:
-    int data_[size_];
-    int $_;
-};*/
 
 int main() {
     CVector<int> v;
     CVector<int> k;
     CVector<int> r;
-    
+
     for (int i = 0; i <= 9; i++) { //initialization
         v[i] = 11+i;
         k[i] = 13-i;
@@ -89,14 +89,14 @@ int main() {
     int num_7 = k[7];
     std::cout << "Numbers: " << num_4 << " and " << num_7 << std::endl;
     
-    r = v + k; //checking overloaded +
+    r = v*num_7; //checking overloaded +
     for (int i = 0; i<10; i++) {
         std::cout << "Element " << i+1 << " in sum with + is "  << r[i] << std::endl;
     };
     
-    v += k; //checking overloaded +=
+    r = num_7*v; //checking overloaded +=
     for (int i = 0; i<10; i++) {
-        std::cout << "Element " << i+1 << " in sum with += is " << v[i] << std::endl;
+        std::cout << "Element " << i+1 << " in sum with += is " << r[i] << std::endl;
     }
     
     int dot_product = v^k; //checking overloaded ^
