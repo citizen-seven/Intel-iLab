@@ -4,5 +4,9 @@
 **/*.pbxproj
 **/*.xcodeproj
 test exit/
-
+*.tex
+*.pdf
+*.gz
+*.aux
+*.log
 Akinator/Akinator/Akinator_base.txt
