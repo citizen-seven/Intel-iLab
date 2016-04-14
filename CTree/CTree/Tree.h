@@ -54,7 +54,7 @@ public:
 };
 
 void print_data(ofstream& latex, CNode* tree);
-int print_equation(CNode* tree);
+//int print_equation(CNode* tree);
 int print_node(ofstream& latex, CNode* tree);
 int print_graph(ofstream& output, CNode* tree);
 int print_tree(CNode* tree);

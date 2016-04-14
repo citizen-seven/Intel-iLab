@@ -154,14 +154,13 @@ void print_data (ofstream& latex, CNode* tree) {
     }
 }
 
-int print_equation(CNode* tree) {
+/*int print_equation(CNode* tree) {
     std::ofstream latex ("equation.tex");
     latex << "\\documentclass[a4paper, 12pt, twoside]{article}\n\
     \\usepackage[T2A,T1]{fontenc}\n\
     \\usepackage[utf8]{inputenc}\n\
     \\usepackage[russian,english]{babel}\n\
     \\usepackage{amsmath}\n\
-    \\usepackage{siunitx}\n\
     \\begin{document}\n\
     \\begin{otherlanguage*}{russian}\n\
     Вывод выражения, поехали!" << std::endl;
@@ -172,24 +171,37 @@ int print_equation(CNode* tree) {
     \\end{document}" << std::endl;
     latex.close();
     return 0;
-}
+}*/
 
 int print_tree(CNode* tree) {
     std::ofstream output ("tree.tex");
-    output << "\\documentclass[a4paper, 12pt, twoside]{article}\n\
+    output << "\\documentclass[a4paper, 12pt]{article}\n\
     \\usepackage[T2A,T1]{fontenc}\n\
     \\usepackage[utf8]{inputenc}\n\
     \\usepackage[russian,english]{babel}\n\
     \\usepackage{amsmath}\n\
-    \\usepackage{siunitx}\n\
     \\usepackage{qtree}\n\
+    \\usepackage{graphicx}\n\
+    \\usepackage{tikz-qtree}\n\
     \\begin{document}\n\
     \\begin{otherlanguage*}{russian}\n\
     Печать дерева, поехали!" << std::endl;
-    output << "\n" << "\\Tree";
+    output << "\n Your expression is:\n" << "$$";
+    print_node(output, tree);
+    output << "$$" << std::endl;
+    output << std::endl;
+    
+    output << "\n Your tree is:\n\
+    \\begin{center}\n\
+    \\resizebox{\\linewidth}{!}{\\begin{tikzpicture}[sibling distance = \\baselineskip]\n\
+    \\tikzset{every tree node/.style={align=center}}\n\
+    \\tikzset{level 1+/.style={level distance=3\\baselineskip}}\n\
+    \\Large \\Tree";
     print_graph(output, tree);
     output << std::endl;
-    output << "\\end{otherlanguage*}\n\
+    output << "\\end{tikzpicture}}\n\
+    \\end{center}\n\
+    \\end{otherlanguage*}\n\
     \\end{document}" << std::endl;
     output.close();
     return 0;
@@ -197,14 +209,15 @@ int print_tree(CNode* tree) {
 
 int print_graph(ofstream& output, CNode* tree) {
     if (tree->GoLeft() != NULL) { 
-        output << " [.";
+        output << " [. \\node[circle,draw=red] {";
         print_data(output, tree);
+        output << "}; ";
         print_graph(output, tree->GoLeft());
     }
     if ((tree->GetType() == Number)||(tree->GetType() == Varible)) {
-        output << " [.";
+        output << " [. \\node[circle,draw=green]{";
         print_data(output, tree);
-        output << " ]";
+        output << "}; ]";
     }
     if (tree->GoRight() != NULL) print_graph(output, tree->GoRight());
     if (tree->GetType() == Sign || tree->GetType() == Function) output << " ]";

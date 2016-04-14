@@ -8,7 +8,7 @@ int main()
     test.PutStr(test.PrepareEquation());
 	CNode* node = test.GetExp();
 	node -> GoDump(0);
-    print_equation(node);
+    //print_equation(node);
     print_tree(node);
     std::cout <<std::endl;
 	delete node;
