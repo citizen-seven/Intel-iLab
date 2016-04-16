@@ -135,7 +135,15 @@ int print_node(ofstream& latex, CNode* tree) {
         std::cout << ")";
     }
     if (tree->GetType() != Function) print_data(latex, tree);
-    if (tree->GoRight() != NULL) print_node(latex, tree->GoRight());
+    if (tree->GoRight() != NULL) {
+        if ((tree->GoRight()->GetType() == Number)||(tree->GoRight()->GetType() == Varible)) {
+            print_node(latex, tree->GoRight());
+        } else {
+            latex << "\\left(";
+            print_node(latex, tree->GoRight());
+            latex << "\\right)";
+        }
+    }
     return 0;
 }
 
