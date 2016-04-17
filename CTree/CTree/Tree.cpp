@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include <Math.h>
 
 CNode::CNode()
 {
@@ -17,37 +18,7 @@ CNode::~CNode()
     left = NULL;
     right = NULL;
 }
-/*
- CNode* CNode::TieLeft(CNode* MyLeft)
- {
- left = MyLeft;
- return this;
- }
- 
- CNode* CNode::TieRight(CNode* MyRight)
- {
- right = MyRight;
- return this;
- }
- 
- void CNode::PutNum(c_type tp, double nm)
- {
- type = tp;
- num = nm;
- }
- 
- void CNode::PutSign(c_type tp, char sg)
- {
- type = tp;
- sign = sg;
- }
- 
- void CNode::PutVar(c_type tp, char vr)
- {
- type = tp;
- var = vr;    
- }
- */
+
 void CNode::GoDump(int tab)
 {
     if(this != NULL)
@@ -115,74 +86,8 @@ CNode::CNode(string t_str, CNode* t_left)
     func = t_str;
 }
 
-int print_node(ofstream& latex, CNode* tree) {
-    if (tree->GetType() != Function) {
-        if (tree->GoLeft() != NULL) { 
-            if ((tree->GoLeft()->GetType() == Number)||(tree->GoLeft()->GetType() == Varible)) {
-                print_node(latex, tree->GoLeft());
-            } else {
-                latex << "\\left(";
-                print_node(latex, tree->GoLeft());
-                latex << "\\right)";
-            }
-        }
-    } else {
-        print_data(latex, tree);
-        latex << "\\left(";
-        std::cout << tree->GetFun() << "(";
-        print_node(latex, tree->GoLeft());
-        latex << "\\right)";
-        std::cout << ")";
-    }
-    if (tree->GetType() != Function) print_data(latex, tree);
-    if (tree->GoRight() != NULL) {
-        if ((tree->GoRight()->GetType() == Number)||(tree->GoRight()->GetType() == Varible)) {
-            print_node(latex, tree->GoRight());
-        } else {
-            latex << "\\left(";
-            print_node(latex, tree->GoRight());
-            latex << "\\right)";
-        }
-    }
-    return 0;
-}
-
-void print_data (ofstream& latex, CNode* tree) {
-    if (tree->GetType() == Number) {
-        latex << tree->GetNum();
-        std::cout << tree->GetNum();
-    } else if (tree->GetType() == Sign) {
-        latex << tree->GetSign();
-        std::cout << tree->GetSign();
-    } else if (tree->GetType() == Varible) {
-        std::cout << tree->GetVar();
-        latex << tree->GetVar();
-    } else if (tree->GetType() == Function) {
-        latex << tree->GetFun();
-    }
-}
-
-/*int print_equation(CNode* tree) {
-    std::ofstream latex ("equation.tex");
-    latex << "\\documentclass[a4paper, 12pt, twoside]{article}\n\
-    \\usepackage[T2A,T1]{fontenc}\n\
-    \\usepackage[utf8]{inputenc}\n\
-    \\usepackage[russian,english]{babel}\n\
-    \\usepackage{amsmath}\n\
-    \\begin{document}\n\
-    \\begin{otherlanguage*}{russian}\n\
-    Вывод выражения, поехали!" << std::endl;
-    latex << "\n" << "$$";
-    print_node(latex, tree);
-    latex << "$$" << std::endl;
-    latex << "\\end{otherlanguage*}\n\
-    \\end{document}" << std::endl;
-    latex.close();
-    return 0;
-}*/
-
-int print_tree(CNode* tree) {
-    std::ofstream output ("tree.tex");
+tree_print::tree_print(string name) {
+    tree_print::output = std::ofstream (name);
     output << "\\documentclass[a4paper, 12pt]{article}\n\
     \\usepackage[T2A,T1]{fontenc}\n\
     \\usepackage[utf8]{inputenc}\n\
@@ -194,40 +99,283 @@ int print_tree(CNode* tree) {
     \\begin{document}\n\
     \\begin{otherlanguage*}{russian}\n\
     Печать дерева, поехали!" << std::endl;
-    output << "\n Your expression is:\n" << "$$";
-    print_node(output, tree);
-    output << "$$" << std::endl;
-    output << std::endl;
-    
-    output << "\n Your tree is:\n\
+}
+
+tree_print::~tree_print() {
+    tree_print::output << std::endl;
+    tree_print::output << "\\end{otherlanguage*}\n\
+    \\end{document}" << std::endl;
+    tree_print::output.close();
+}
+
+void tree_print::print_data_(CNode* tree, int special_characters) {
+    if (tree->GetType() == Number) {
+        tree_print::output << tree->GetNum();
+        std::cout << tree->GetNum();
+    } else if (tree->GetType() == Sign) {
+        if (tree->GetSign() == '^' && special_characters) {
+            tree_print::output << "\\char94";
+        } else {
+            tree_print::output << tree->GetSign();
+            std::cout << tree->GetSign();
+        }
+    } else if (tree->GetType() == Varible) {
+        std::cout << tree->GetVar();
+        tree_print::output << tree->GetVar();
+    } else if (tree->GetType() == Function) {
+        tree_print::output << tree->GetFun();
+    }
+}
+
+void tree_print::equation(CNode* tree) {
+    tree_print::output << "\n Your expression is:\n" << "$$";
+    tree_print::print_equation_(tree);
+    tree_print::output << "$$" << std::endl;
+}
+
+void tree_print::print_equation_(CNode* tree) {
+    if (tree->GetType() != Function) {
+        if (tree->GoLeft() != NULL) { 
+            if ((tree->GoLeft()->GetType() == Number)||(tree->GoLeft()->GetType() == Varible)) {
+                tree_print::print_equation_(tree->GoLeft());
+            } else {
+                tree_print::output << "\\left(";
+                tree_print::print_equation_(tree->GoLeft());
+                tree_print::output << "\\right)";
+            }
+        }
+    } else {
+        tree_print::print_data_(tree);
+        tree_print::output << "\\left(";
+        std::cout << tree->GetFun() << "(";
+        tree_print::print_equation_(tree->GoLeft());
+        tree_print::output << "\\right)";
+        std::cout << ")";
+    }
+    if (tree->GetType() != Function) print_data_(tree);
+    if (tree->GoRight() != NULL) {
+        if ((tree->GoRight()->GetType() == Number)||(tree->GoRight()->GetType() == Varible)) {
+            tree_print::print_equation_(tree->GoRight());
+        } else {
+            tree_print::output << "\\left(";
+            tree_print::print_equation_(tree->GoRight());
+            tree_print::output << "\\right)";
+        }
+    }
+}
+
+void tree_print::tree(CNode* tree) {
+    tree_print::output << "\n Your tree is:\n\
     \\begin{center}\n\
     \\resizebox{\\linewidth}{!}{\\begin{tikzpicture}[sibling distance = \\baselineskip]\n\
     \\tikzset{every tree node/.style={align=center}}\n\
     \\tikzset{level 1+/.style={level distance=3\\baselineskip}}\n\
     \\Large \\Tree";
-    print_graph(output, tree);
-    output << std::endl;
-    output << "\\end{tikzpicture}}\n\
-    \\end{center}\n\
-    \\end{otherlanguage*}\n\
-    \\end{document}" << std::endl;
-    output.close();
-    return 0;
+    tree_print::print_tree_(tree);
+    tree_print::output << std::endl;
+    tree_print::output << "\\end{tikzpicture}}\n\
+    \\end{center}\n" << std::endl;
 }
 
-int print_graph(ofstream& output, CNode* tree) {
+void tree_print::print_tree_(CNode* tree) {
     if (tree->GoLeft() != NULL) { 
-        output << " [. \\node[circle,draw=red] {";
-        print_data(output, tree);
-        output << "}; ";
-        print_graph(output, tree->GoLeft());
+        tree_print::output << " [. \\node[circle,draw=red] {";
+        tree_print::print_data_(tree, 1);
+        tree_print::output << "}; ";
+        tree_print::print_tree_(tree->GoLeft());
     }
     if ((tree->GetType() == Number)||(tree->GetType() == Varible)) {
-        output << " [. \\node[circle,draw=green]{";
-        print_data(output, tree);
+        tree_print::output << " [. \\node[circle,draw=green]{";
+        tree_print::tree_print::print_data_(tree, 1);
         output << "}; ]";
     }
-    if (tree->GoRight() != NULL) print_graph(output, tree->GoRight());
-    if (tree->GetType() == Sign || tree->GetType() == Function) output << " ]";
-    return 0;
+    if (tree->GoRight() != NULL) tree_print::print_tree_(tree->GoRight());
+    if (tree->GetType() == Sign || tree->GetType() == Function) tree_print::output << " ]";
+}
+
+CNode* const_optimization(const CNode* subtree)
+{
+    {
+        switch (subtree->type)
+        {
+            case Number:
+            {
+                return new CNode(subtree->num);
+                break;
+            }
+            case Sign:
+            {
+                switch (subtree->sign)
+                {
+                    case '+':
+                    {
+                        if ((subtree->left->type == Number) && (subtree->right->type == Number))
+                        {
+                            return new CNode(subtree->left->num + subtree->right->num);
+                        }
+                        else    
+                        {
+                            return new CNode('+', const_optimization(subtree->left), const_optimization(subtree->right));
+                        }
+                        break;
+                    }
+                    case'-':
+                    {
+                        if ((subtree->left->type == Number) && (subtree->right->type == Number))
+                        {
+                            return new CNode(subtree->left->num - subtree->right->num);
+                        }
+                        else
+                        {   
+                            return new CNode('-', const_optimization(subtree->left), const_optimization(subtree->right));
+                        }
+                        break;
+                    }
+                    case '*':
+                    {
+                        if ((subtree->left->type == Number) && (subtree->right->type == Number))
+                        {
+                            return new CNode(subtree->left->num * subtree->right->num); 
+                        }
+                        else
+                        {
+                            return new CNode('*', const_optimization(subtree->left), const_optimization(subtree->right));
+                        }
+                        break;
+                    }
+                    case '/':
+                    {
+                        if ((subtree->left->type == Number) && (subtree->right->type == Number))
+                        {
+                            return new CNode(subtree->left->num / subtree->right->num); 
+                        }
+                        else
+                        {
+                            return new CNode('/', const_optimization(subtree->left), const_optimization(subtree->right));
+                        }
+                        break;
+                    }
+                    case'^':
+                    {
+                        if ((subtree->left->type == Number) && (subtree->right->type == Number))
+                        {
+                            return new CNode(pow(subtree->left->num, subtree->right->num));
+                        }
+                        else
+                        {
+                            return new CNode('^', const_optimization(subtree->left), const_optimization(subtree->right));
+                        }
+                        break;
+                    }
+                }
+            }
+            case Varible:
+            {
+                return new CNode('x');
+                break;
+            }
+            case Function:
+            {
+                if (strcmp(subtree->func.c_str(), "sin") == 0)
+                {
+                    return new CNode("sin", const_optimization(subtree->left));
+                }
+                else if (strcmp(subtree->func.c_str(), "cos") == 0)
+                {
+                    return new CNode("cos", const_optimization(subtree->left));
+                }
+                else if (strcmp(subtree->func.c_str(), "ln") == 0)
+                {
+                    return new CNode("ln", const_optimization(subtree->left));
+                }
+                // else if (strcmp(subtree->func.c_str(), "tg") == 0)
+                {
+                    //return new CNode("/", new CNode (1.0), derivate(subtree->left));
+                }
+                break;
+            }
+        }
+        
+    }
+    return new CNode("ln", const_optimization(subtree->left));
+}
+
+CNode* derivate(const CNode* subtree)
+{
+    switch (subtree->type)
+    {
+        case Number:
+        {
+            return new CNode(0.0);
+            break;
+        }
+        case Sign:
+        {
+            switch (subtree->sign)
+            {
+                case '+':
+                {
+                    return new CNode('+', derivate(subtree->left), derivate(subtree->right));
+                    break;
+                }
+                case'-':
+                {
+                    return new CNode('-', derivate(subtree->left), derivate(subtree->right));
+                    break;
+                }
+                case '*':
+                {
+                    return new CNode('+', new CNode('*',\
+                                                    derivate(subtree->left), subtree->right),\
+                                     new CNode('*', subtree->left, derivate(subtree->right)));
+                    break;
+                }
+                case '/':
+                {
+                    return new CNode('/', new CNode('-',\
+                                                    new CNode('*', derivate(subtree->left),\
+                                                              subtree->right), new CNode('*', subtree->left,\
+                                                                                         derivate(subtree->right))), \
+                                     new CNode('^', derivate(subtree->left), new CNode(2.0)));
+                    break;
+                }
+                case'^':
+                {
+                    return new CNode('*', new CNode('^',\
+                                                    subtree->left, subtree->right),\
+                                     new CNode('+', new CNode('*', new CNode('/',\
+                                                                             subtree->left, subtree->right),\
+                                                              derivate(subtree->left)), new CNode('*', \
+                                                                                                  new CNode("ln", subtree->left), derivate(subtree->right))));
+                    break;
+                }
+            }
+        }
+        case Varible:
+        {
+            return new CNode(1.0);
+            break;
+        }
+        case Function:
+        {
+            if (strcmp(subtree->func.c_str(), "sin") == 0)
+            {
+                return new CNode('*', new CNode("cos", subtree->left), derivate(subtree->left));
+            }
+            else if (strcmp(subtree->func.c_str(), "cos") == 0)
+            {
+                return new CNode('*', new CNode('-', new CNode(0.0), new CNode("sin", subtree->left)), derivate(subtree->left));
+            }
+            else if (strcmp(subtree->func.c_str(), "ln") == 0)
+            {
+                return new CNode('/', new CNode(1.0), derivate(subtree->left));
+            }
+            // else if (strcmp(subtree->func.c_str(), "tg") == 0)
+            {
+                //return new CNode("/", new CNode (1.0), derivate(subtree->left));
+            }
+            break;
+        }
+    }
+    return new CNode("ln", const_optimization(subtree->left));
 }
