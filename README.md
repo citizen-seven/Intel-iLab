@@ -1,1 +1,1 @@
-## Intel ilab programming laboratory tasks
+## Intel iLab programming laboratory tasks
